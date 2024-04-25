@@ -1,0 +1,4 @@
+// product-service/build.gradle
+dependencies {
+    // 필요한 의존성 추가
+}

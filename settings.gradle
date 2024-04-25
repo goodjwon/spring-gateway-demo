@@ -1,1 +1,6 @@
 rootProject.name = 'spring.cloud.gateway'
+include 'gateway'
+include 'member-service'
+include 'permission-service'
+include 'product-service'
+
