@@ -1,4 +1,13 @@
-// member-service/build.gradle
+plugins {
+    id 'org.springframework.boot'
+    id 'java'
+    id 'application'
+}
+
+application {
+    mainClassName = 'org.example.Main'
+}
+
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 }

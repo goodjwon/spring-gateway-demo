@@ -1,4 +1,13 @@
-// permission-service/build.gradle
+plugins {
+    id 'org.springframework.boot'
+    id 'java'
+    id 'application'
+}
+
+application {
+    mainClassName = 'org.example.Main'
+}
+
 dependencies {
-    // 필요한 의존성 추가
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 }

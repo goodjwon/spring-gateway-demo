@@ -35,12 +35,32 @@ subprojects {
 	}
 
 	dependencies {
-		implementation 'org.springframework.boot:spring-boot-starter-webflux'
 		testImplementation 'org.springframework.boot:spring-boot-starter-test'
-		testImplementation 'org.springframework.security:spring-security-test'
 	}
 
 	test {
 		useJUnitPlatform()
+	}
+}
+
+tasks.register('runAll') {
+	doFirst {
+		println "Starting all services..."
+	}
+	// 각 서브 프로젝트의 bootRun 태스크를 실행하는 설정
+	subprojects.each { subproject ->
+		if (subproject.plugins.hasPlugin('org.springframework.boot')) {
+			dependsOn "${subproject.path}:bootRun"
+		}
+	}
+}
+
+
+configure(subprojects.findAll { it.name.endsWith('service') }) {
+	bootJar {
+		enabled = false
+	}
+	jar {
+		enabled = true
 	}
 }
