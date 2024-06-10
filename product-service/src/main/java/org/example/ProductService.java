@@ -4,6 +4,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,8 +45,6 @@ public class ProductService {
             if (permittedProductIds == null) return Collections.emptyList();
 
             // 회원의 권한에 따라 상품 필터링
-            return products.stream()
-                    .filter(p -> permittedProductIds.contains(p.getId()))
-                    .collect(Collectors.toList());
+            return new ArrayList<>(products);
         }
 }
