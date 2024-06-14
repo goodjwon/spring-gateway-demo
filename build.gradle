@@ -19,7 +19,6 @@ ext {
 	set('springCloudVersion', "2023.0.1")
 }
 
-
 dependencyManagement {
 	imports {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
@@ -48,26 +47,68 @@ subprojects {
 	test {
 		useJUnitPlatform()
 	}
+
+	bootRun {
+		doFirst {
+			def pidFile = file("${project.buildDir}/pid/${project.name}.pid")
+			pidFile.parentFile.mkdirs()
+			pidFile.withWriter { writer ->
+				writer << java.lang.management.ManagementFactory.getRuntimeMXBean().getName().split("@")[0]
+			}
+		}
+	}
+
+	bootJar {
+		enabled = false
+	}
+
+	jar {
+		enabled = true
+	}
 }
 
 tasks.register('runAll') {
 	doFirst {
 		println "Starting all services..."
 	}
-	// 각 서브 프로젝트의 bootRun 태스크를 실행하는 설정
 	subprojects.each { subproject ->
 		if (subproject.plugins.hasPlugin('org.springframework.boot')) {
-			dependsOn "${subproject.path}:bootRun"
+			doLast {
+				exec {
+					commandLine 'cmd', '/c', "start", "gradlew", "-p", "${subproject.projectDir}", "bootRun"
+				}
+			}
 		}
+	}
+	doLast {
+		println "All services started."
 	}
 }
 
-
-configure(subprojects.findAll { it.name.endsWith('service') }) {
-	bootJar {
-		enabled = false
+tasks.register('stopAll') {
+	doFirst {
+		println "Stopping all services..."
 	}
-	jar {
-		enabled = true
+	subprojects.each { subproject ->
+		if (subproject.plugins.hasPlugin('org.springframework.boot')) {
+			doLast {
+				def pidFile = file("${subproject.buildDir}/pid/${subproject.name}.pid")
+				if (pidFile.exists()) {
+					def pid = pidFile.text.trim()
+					println "Stopping ${subproject.name} with PID ${pid}..."
+					try {
+						"taskkill /PID ${pid} /F".execute().waitFor()
+						pidFile.delete()
+					} catch (Exception e) {
+						println "Failed to stop ${subproject.name}: ${e.message}"
+					}
+				} else {
+					println "PID file for ${subproject.name} not found."
+				}
+			}
+		}
+	}
+	doLast {
+		println "All services stopped."
 	}
 }

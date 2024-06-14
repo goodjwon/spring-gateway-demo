@@ -16,3 +16,13 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 }
+
+bootRun {
+    doFirst {
+        def pidFile = file("${project.buildDir}/pid/${project.name}.pid")
+        pidFile.parentFile.mkdirs()
+        pidFile.withWriter { writer ->
+            writer << java.lang.management.ManagementFactory.getRuntimeMXBean().getName().split("@")[0]
+        }
+    }
+}

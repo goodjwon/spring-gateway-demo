@@ -34,6 +34,8 @@ gradle로  프로젝트 구성에  스크립트를 작성하고
 - http://localhost:8083 
 
 ## Member Service
+- http://localhost:8081
 
 ## Permission Service
+- http://localhost:8082
 

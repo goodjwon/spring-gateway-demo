@@ -24,3 +24,13 @@ dependencyManagement {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.1"
     }
 }
+
+bootRun {
+    doFirst {
+        def pidFile = file("${project.buildDir}/pid/${project.name}.pid")
+        pidFile.parentFile.mkdirs()
+        pidFile.withWriter { writer ->
+            writer << java.lang.management.ManagementFactory.getRuntimeMXBean().getName().split("@")[0]
+        }
+    }
+}

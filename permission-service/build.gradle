@@ -12,3 +12,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 }
+
+bootRun {
+    doFirst {
+        def pidFile = file("${project.buildDir}/pid/${project.name}.pid")
+        pidFile.parentFile.mkdirs()
+        pidFile.withWriter { writer ->
+            writer << java.lang.management.ManagementFactory.getRuntimeMXBean().getName().split("@")[0]
+        }
+    }
+}
